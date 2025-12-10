@@ -23,14 +23,7 @@ const Footer = () => {
             {/* Red Card Image Section */}
             <div className="red-card-section">
               <div className="card-image-container">
-                <img 
-                  src="../assets/bigcar.webp" 
-                  alt="Auto Solutions Pro Red Card"
-                  className="red-card-image"
-                  onError={(e) => {
-                    e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='180' viewBox='0 0 300 180'%3E%3Crect width='300' height='180' fill='%23dc2626' rx='12'/%3E%3Ctext x='50%25' y='40%25' text-anchor='middle' fill='white' font-family='Arial' font-size='24'%3EAuto Solutions Pro%3C/text%3E%3Ctext x='50%25' y='60%25' text-anchor='middle' fill='white' font-family='Arial' font-size='16'%3EVIN Verification Card%3C/text%3E%3C/svg%3E";
-                  }}
-                />
+                
                 <div className="card-glow"></div>
               </div>
               <div className="card-info">
