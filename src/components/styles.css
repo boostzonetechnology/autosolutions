@@ -1,0 +1,1254 @@
+/* --- Preloader Styles --- */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 9999;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.preloader.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Racing Track */
+.racing-track {
+    width: 300px;
+    height: 120px;
+    position: relative;
+    margin-bottom: 40px;
+    background: 
+        linear-gradient(90deg, 
+            transparent 0%, 
+            rgba(255, 215, 0, 0.1) 50%, 
+            transparent 100%),
+        repeating-linear-gradient(90deg,
+            transparent 0%,
+            transparent 45%,
+            rgba(255, 255, 255, 0.8) 45%,
+            rgba(255, 255, 255, 0.8) 55%,
+            transparent 55%,
+            transparent 100%);
+    background-size: 100% 100%, 40px 100%;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Racing Cars */
+.racing-car {
+    position: absolute;
+    font-size: 40px;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.car-1 {
+    top: 20px;
+    left: -50px;
+    animation-name: raceLeftToRight;
+    animation-delay: 0s;
+    color: #FFD700;
+}
+
+.car-2 {
+    top: 60px;
+    left: -50px;
+    animation-name: raceLeftToRight;
+    animation-delay: 0.5s;
+    animation-duration: 1.8s;
+    color: #FF8C00;
+}
+
+.car-3 {
+    top: 40px;
+    right: -50px;
+    animation-name: raceRightToLeft;
+    animation-delay: 0.3s;
+    animation-duration: 2.2s;
+    color: #00BFFF;
+}
+
+/* Loading Text */
+.loading-text {
+    color: #FFD700;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+}
+
+.loading-text::after {
+    content: '';
+    animation: loadingDots 1.5s infinite;
+}
+
+/* Loading Bar */
+.loading-bar {
+    width: 300px;
+    height: 6px;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 3px;
+    margin-top: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.loading-progress {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #FFD700, #FF8C00);
+    border-radius: 3px;
+    animation: loadingProgress 2s ease-in-out forwards;
+    position: relative;
+    overflow: hidden;
+}
+
+.loading-progress::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shine 1.5s infinite;
+}
+
+/* Preloader Animations */
+@keyframes raceLeftToRight {
+    0% {
+        transform: translateX(-50px) translateY(0) rotate(0deg);
+    }
+    25% {
+        transform: translateX(75px) translateY(-5px) rotate(5deg);
+    }
+    50% {
+        transform: translateX(150px) translateY(0) rotate(0deg);
+    }
+    75% {
+        transform: translateX(225px) translateY(5px) rotate(-5deg);
+    }
+    100% {
+        transform: translateX(350px) translateY(0) rotate(0deg);
+    }
+}
+
+@keyframes raceRightToLeft {
+    0% {
+        transform: translateX(350px) translateY(0) rotate(180deg);
+    }
+    25% {
+        transform: translateX(225px) translateY(-5px) rotate(185deg);
+    }
+    50% {
+        transform: translateX(150px) translateY(0) rotate(180deg);
+    }
+    75% {
+        transform: translateX(75px) translateY(5px) rotate(175deg);
+    }
+    100% {
+        transform: translateX(-50px) translateY(0) rotate(180deg);
+    }
+}
+
+@keyframes loadingProgress {
+    0% {
+        width: 0%;
+    }
+    50% {
+        width: 70%;
+    }
+    100% {
+        width: 100%;
+    }
+}
+
+@keyframes loadingDots {
+    0% {
+        content: '';
+    }
+    25% {
+        content: '.';
+    }
+    50% {
+        content: '..';
+    }
+    75% {
+        content: '...';
+    }
+    100% {
+        content: '';
+    }
+}
+
+@keyframes shine {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* --- Enhanced Global Styles --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    scroll-behavior: smooth;
+}
+
+body {
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
+    color: #e6e6e6;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+}
+
+h1, h2, h3 {
+    font-weight: 800;
+    background: linear-gradient(90deg, #FFD700, #FF8C00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+    display: inline-block;
+}
+
+h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #FFD700, #FF8C00);
+    border-radius: 2px;
+}
+
+/* --- Enhanced Mobile Navigation --- */
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Base Navbar Styles */
+nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 25px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    background: rgba(10, 10, 26, 0.9);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+    animation: slideDown 0.8s ease-out;
+}
+
+nav.sticky {
+    background: rgba(0, 0, 30, 0.98);
+    padding: 15px 60px;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.1);
+}
+
+/* Desktop Navigation */
+.desktop-nav {
+    display: flex;
+    list-style: none;
+    gap: 40px;
+}
+
+.desktop-nav li {
+    position: relative;
+    overflow: hidden;
+}
+
+.desktop-nav li a {
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 8px 0;
+    position: relative;
+    color: #fff;
+}
+
+.desktop-nav li a::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -100%;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #FFD700, #FF8C00);
+    transition: left 0.4s ease;
+    border-radius: 2px;
+}
+
+.desktop-nav li a:hover::before {
+    left: 0;
+}
+
+.desktop-nav li a:hover {
+    color: #FFD700;
+    transform: translateY(-2px);
+}
+
+.desktop-nav li a.highlighted {
+    background: linear-gradient(45deg, #FFD700, #FF8C00);
+    color: #000;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.desktop-nav li a.highlighted:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
+}
+
+nav .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+nav .logo img {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Mobile Menu Toggle Button */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 24px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1002;
+    position: relative;
+}
+
+.menu-line {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background: #FFD700;
+    border-radius: 3px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-origin: center;
+}
+
+.menu-toggle.open .line-1 {
+    transform: translateY(10.5px) rotate(45deg);
+}
+
+.menu-toggle.open .line-2 {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.menu-toggle.open .line-3 {
+    transform: translateY(-10.5px) rotate(-45deg);
+}
+
+/* Mobile Navigation Overlay */
+.mobile-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1001;
+    display: none;
+}
+
+.mobile-nav.open {
+    display: block;
+}
+
+.mobile-nav-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.mobile-nav-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 320px;
+    height: 100%;
+    background: rgba(10, 10, 26, 0.98);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid rgba(255, 215, 0, 0.2);
+    box-shadow: -10px 0 50px rgba(0, 0, 0, 0.5);
+    animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.mobile-nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 20px;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.mobile-logo {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+}
+
+.mobile-close-btn {
+    background: transparent;
+    border: none;
+    color: #FFD700;
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 5px;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-close-btn:hover {
+    background: rgba(255, 215, 0, 0.1);
+    transform: rotate(90deg);
+}
+
+.mobile-nav-items {
+    list-style: none;
+    padding: 20px 0;
+    margin: 0;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.mobile-nav-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mobile-nav-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.mobile-nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+.mobile-nav-link:hover::before {
+    left: 100%;
+}
+
+.mobile-nav-link:hover {
+    color: #FFD700;
+    padding-left: 30px;
+    background: rgba(255, 215, 0, 0.05);
+}
+
+.mobile-nav-link.highlighted {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), rgba(255, 140, 0, 0.2));
+    color: #FFD700;
+    font-weight: 700;
+}
+
+.mobile-nav-arrow {
+    font-size: 1.2rem;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    transform: translateX(0);
+}
+
+.mobile-nav-link:hover .mobile-nav-arrow {
+    opacity: 1;
+    transform: translateX(5px);
+}
+
+.mobile-nav-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.mobile-contact-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin: 12px 0;
+}
+
+.mobile-contact-icon {
+    font-size: 1.2rem;
+    color: #FFD700;
+}
+
+/* --- Enhanced Hero Section with VIN Decoder --- */
+.hero {
+    min-height: 100vh;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 140, 0, 0.1) 0%, transparent 50%),
+        linear-gradient(rgba(0, 0, 30, 0.85), rgba(10, 10, 40, 0.9)),
+        url('https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    padding: 120px 20px 40px;
+    position: relative;
+    overflow: hidden;
+    animation: heroBackgroundShift 20s infinite alternate ease-in-out;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    margin-bottom: 30px;
+    text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+    line-height: 1.2;
+    animation: titleReveal 1s ease forwards;
+}
+
+.unlock-section {
+    margin-bottom: 50px;
+    animation: fadeInUp 1s 0.3s ease forwards;
+    opacity: 0;
+}
+
+.unlock-title-text {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    margin-bottom: 15px;
+    background: linear-gradient(90deg, #FFD700, #FF8C00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+    display: inline-block;
+}
+
+.unlock-title-text::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 3px;
+    background: linear-gradient(90deg, #FFD700, #FF8C00);
+    border-radius: 2px;
+    animation: underlineGrow 1s 0.5s ease forwards;
+}
+
+.unlock-subtitle {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.9);
+    position: relative;
+}
+
+/* Wrapper for VIN Decoder */
+.wrapper {
+    background: rgba(10, 10, 26, 0.85);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: clamp(20px, 4vw, 40px);
+    margin-top: clamp(20px, 4vw, 40px);
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    z-index: 2;
+    animation: wrapperAppear 1s 1s forwards;
+    opacity: 0;
+}
+
+.subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+    margin-bottom: clamp(20px, 3vw, 30px);
+    line-height: 1.6;
+    text-align: center;
+}
+
+/* VIN Form Styling */
+.vin-form {
+    display: flex;
+    gap: clamp(10px, 2vw, 15px);
+    margin-bottom: 20px;
+}
+
+.vin-input {
+    flex: 1;
+    padding: clamp(15px, 3vw, 20px);
+    border-radius: 12px;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    font-size: clamp(16px, 2vw, 18px);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s ease;
+    font-family: monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.vin-input:focus {
+    outline: none;
+    border-color: #FFD700;
+    box-shadow: 
+        0 0 25px rgba(255, 215, 0, 0.4),
+        0 0 50px rgba(255, 215, 0, 0.2);
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.decode-btn {
+    padding: clamp(15px, 3vw, 20px) clamp(25px, 4vw, 40px);
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(45deg, #FFD700, #FF8C00);
+    color: #000;
+    font-weight: bold;
+    font-size: clamp(16px, 2vw, 18px);
+    cursor: pointer;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 8px 25px rgba(255, 140, 0, 0.3),
+        0 0 30px rgba(255, 215, 0, 0.2);
+    min-width: auto;
+}
+
+.decode-btn:hover:not(:disabled) {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 
+        0 15px 35px rgba(255, 140, 0, 0.5),
+        0 0 60px rgba(255, 215, 0, 0.3);
+    background: linear-gradient(45deg, #FFC107, #FF9800);
+}
+
+.decode-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.loading-spinner {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+}
+
+/* Status Message */
+.status {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    font-weight: 500;
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.status.ok {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4CAF50;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.status.error {
+    background: rgba(244, 67, 54, 0.15);
+    color: #F44336;
+    border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+/* Animated road lines */
+.road-lines {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 50px,
+        rgba(255, 215, 0, 0.3) 50px,
+        rgba(255, 215, 0, 0.3) 100px
+    );
+    animation: roadMove 2s linear infinite;
+    opacity: 0.3;
+    z-index: 1;
+}
+
+/* --- Enhanced Sections --- */
+section {
+    padding: 100px 20px;
+    position: relative;
+    min-height: auto;
+    overflow: visible;
+}
+
+section h2 {
+    font-size: 3rem;
+    margin-bottom: 40px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* --- Fix Text Visibility in Main Sections --- */
+section p:not(.hero p) {
+    max-width: 800px;
+    margin: 0 auto 50px;
+    text-align: center;
+    color: rgba(230, 230, 230, 0.95);
+    line-height: 1.8;
+    font-size: 1.2rem;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Enhanced Cards Container --- */
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    perspective: 1000px;
+    position: relative;
+    z-index: 2;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+/* --- Enhanced Animations --- */
+@keyframes slideDown {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes titleReveal {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes wrapperAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes underlineGrow {
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes heroBackgroundShift {
+    0% {
+        background-position: center center, center center, center center, center center;
+    }
+    50% {
+        background-position: 20% 50%, 80% 20%, center center, 30% center;
+    }
+    100% {
+        background-position: 10% 60%, 90% 10%, center center, 70% center;
+    }
+}
+
+@keyframes roadMove {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100px); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* --- Particle Animation Background for Sections --- */
+.particle-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.particle-bg::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 215, 0, 0.05) 1px, transparent 1px),
+        radial-gradient(circle at 90% 40%, rgba(255, 140, 0, 0.05) 1px, transparent 1px);
+    background-size: 80px 80px;
+    animation: particleMove 40s linear infinite;
+    opacity: 0.3;
+}
+
+@keyframes particleMove {
+    0% { transform: translateY(0) translateX(0); }
+    100% { transform: translateY(100px) translateX(50px); }
+}
+
+/* --- Add Floating Car Animation in Background --- */
+.floating-car {
+    position: absolute;
+    font-size: 40px;
+    opacity: 0.1;
+    z-index: 1;
+    animation: floatAcross 20s linear infinite;
+}
+
+.floating-car:nth-child(1) {
+    top: 20%;
+    left: -50px;
+    animation-delay: 0s;
+    animation-duration: 25s;
+}
+
+.floating-car:nth-child(2) {
+    top: 50%;
+    left: -50px;
+    animation-delay: 5s;
+    animation-duration: 30s;
+}
+
+.floating-car:nth-child(3) {
+    top: 80%;
+    left: -50px;
+    animation-delay: 10s;
+    animation-duration: 35s;
+}
+
+@keyframes floatAcross {
+    0% { transform: translateX(-100px) translateY(0) rotate(0deg); }
+    25% { transform: translateX(25vw) translateY(-20px) rotate(5deg); }
+    50% { transform: translateX(50vw) translateY(0) rotate(0deg); }
+    75% { transform: translateX(75vw) translateY(20px) rotate(-5deg); }
+    100% { transform: translateX(calc(100vw + 100px)) translateY(0) rotate(0deg); }
+}
+
+/* --- Add Scroll-triggered Animations --- */
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- Scroll Progress Indicator --- */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 4px;
+    background: linear-gradient(90deg, #FFD700, #FF8C00);
+    z-index: 1001;
+    transition: width 0.2s ease;
+}
+
+/* --- Ensure Content is Above Background --- */
+section > .content-wrapper,
+section > .cards-container,
+section > form,
+section > p,
+section > h2 {
+    position: relative;
+    z-index: 2;
+}
+
+/* --- Enhanced Mobile Responsiveness --- */
+@media (max-width: 1024px) {
+    .hero-content {
+        padding: 0 20px;
+    }
+}
+
+@media (max-width: 900px) {
+    .desktop-nav {
+        display: none;
+    }
+    
+    .menu-toggle {
+        display: flex;
+    }
+    
+    nav {
+        padding: 15px 20px;
+    }
+    
+    .nav-container {
+        padding: 0 10px;
+    }
+    
+    .hero {
+        padding: 100px 20px 30px;
+    }
+    
+    .vin-form {
+        flex-direction: column;
+    }
+    
+    .vin-input, .decode-btn {
+        width: 100%;
+    }
+    
+    .wrapper {
+        padding: 25px;
+    }
+    
+    .road-lines {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .unlock-title-text {
+        font-size: 2rem;
+    }
+    
+    .mobile-nav-content {
+        width: 280px;
+    }
+    
+    .mobile-nav-link {
+        padding: 16px 20px;
+        font-size: 1rem;
+    }
+    
+    .logo-img {
+        height: 50px;
+    }
+    
+    section {
+        padding: 60px 20px;
+    }
+    
+    section h2 {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 80px 15px 20px;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+    
+    .unlock-title-text {
+        font-size: 1.6rem;
+    }
+    
+    .unlock-subtitle {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    .wrapper {
+        padding: 20px;
+        border-radius: 16px;
+    }
+    
+    .mobile-nav-content {
+        width: 85%;
+        max-width: 300px;
+    }
+    
+    nav {
+        padding: 12px 15px;
+    }
+    
+    .logo-img {
+        height: 45px;
+    }
+    
+    .mobile-nav-link {
+        padding: 14px 20px;
+    }
+    
+    section h2 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 375px) {
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    
+    .unlock-title-text {
+        font-size: 1.4rem;
+    }
+    
+    .wrapper {
+        padding: 16px;
+    }
+    
+    .vin-input {
+        padding: 14px;
+        font-size: 15px;
+    }
+    
+    .decode-btn {
+        padding: 14px 20px;
+        font-size: 15px;
+    }
+    
+    .logo-img {
+        height: 40px;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .mobile-nav-link {
+        padding: 20px;
+        min-height: 60px;
+    }
+    
+    .decode-btn, .menu-toggle, .mobile-close-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .vin-input {
+        min-height: 50px;
+    }
+    
+    .mobile-nav-item:active .mobile-nav-link {
+        background: rgba(255, 215, 0, 0.1);
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .mobile-nav-content {
+        animation: none;
+        transform: translateX(0);
+    }
+    
+    .menu-toggle.open .menu-line {
+        animation: none;
+    }
+}
+
+/* Landscape Mobile Optimization */
+@media (max-height: 600px) and (orientation: landscape) {
+    .mobile-nav-content {
+        width: 250px;
+    }
+    
+    .mobile-nav-header {
+        padding: 15px 20px;
+    }
+    
+    .mobile-nav-link {
+        padding: 12px 20px;
+    }
+    
+    .hero {
+        min-height: auto;
+        padding: 80px 20px 40px;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .mobile-nav-content {
+        background: rgba(15, 15, 30, 0.98);
+    }
+    
+    .mobile-nav-link {
+        color: rgba(240, 240, 240, 0.95);
+    }
+}
+
+/* Print Styles */
+@media print {
+    .mobile-nav, .menu-toggle, .road-lines, .floating-car {
+        display: none !important;
+    }
+    
+    nav {
+        position: static;
+        background: white !important;
+        color: black !important;
+    }
+    
+    .desktop-nav {
+        display: none;
+    }
+}
+
+/* Smooth Scrolling for Anchor Links */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Ensure Content Visibility on Small Screens */
+.hero-content {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Fix for iOS Safari */
+@supports (-webkit-touch-callout: none) {
+    .hero {
+        min-height: -webkit-fill-available;
+    }
+    
+    .mobile-nav {
+        height: -webkit-fill-available;
+    }
+}
