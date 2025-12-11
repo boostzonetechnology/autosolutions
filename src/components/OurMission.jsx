@@ -60,18 +60,27 @@ const OurMission = () => {
           {/* Section Header */}
           <div className="mission-header">
             <h2 className="mission-title">
-              <span className="mission-title-text">
-                {["O", "U", "R", " ", "M", "I", "S", "S", "I", "O", "N"].map((letter, index) => (
-                  <span 
-                    key={index} 
-                    className="mission-letter"
-                    style={{ animationDelay: `${index * 0.08}s` }}
-                  >
-                    {letter}
-                  </span>
-                ))}
-              </span>
-            </h2>
+  <span className="mission-title-text">
+    {["OUR", "MISSION"].map((word, wordIndex) => (
+      <span 
+        key={wordIndex} 
+        className="word"
+        style={{ marginRight: wordIndex < 1 ? '15px' : '0' }} // space between words
+      >
+        {word.split('').map((letter, letterIndex) => (
+          <span 
+            key={letterIndex} 
+            className="mission-letter"
+            style={{ animationDelay: `${letterIndex * 0.08 + wordIndex * 0.3}s` }}
+          >
+            {letter}
+          </span>
+        ))}
+      </span>
+    ))}
+  </span>
+</h2>
+
             
             <div className="mission-underline">
               <div className="mission-line"></div>
@@ -225,10 +234,6 @@ const OurMission = () => {
             <button className="cta-btn primary">
               <span className="btn-icon">📞</span>
               <span>Contact Us</span>
-            </button>
-            <button className="cta-btn secondary">
-              <span className="btn-icon">💬</span>
-              <span>Live Chat</span>
             </button>
           </div>
         </div>

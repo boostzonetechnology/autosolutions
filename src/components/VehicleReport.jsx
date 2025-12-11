@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./VehicleReport.css";
 import PaymentModal from './PaymentModal';
 import PaymentSuccess from './PaymentSuccess';
 
-const VehicleReport = ({ vin, onBack }) => {
+const VehicleReport = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  // Get VIN from location state or redirect to home
+  const vin = location.state?.vin || '';
+  
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [vehicleData, setVehicleData] = useState(null);
@@ -13,7 +20,8 @@ const VehicleReport = ({ vin, onBack }) => {
   const [showPricingPlans, setShowPricingPlans] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [userCountry, setUserCountry] = useState('US');
-  const [userEmail, setUserEmail] = useState(''); // Add email state
+  const [userEmail, setUserEmail] = useState('');
+  const [hasValidVIN, setHasValidVIN] = useState(true);
   
   const checks = [
     { id: 1, name: "Accidents", icon: "🚗", color: "#FF6B6B" },
@@ -78,6 +86,19 @@ const VehicleReport = ({ vin, onBack }) => {
   ];
 
   useEffect(() => {
+    // Check if we have a valid VIN
+    if (!vin || vin.length < 5) {
+      setHasValidVIN(false);
+      
+      // Show error message for a moment then redirect
+      setTimeout(() => {
+        navigate('/', { state: { shouldFocusInput: true } });
+      }, 3000);
+      return;
+    }
+    
+    setHasValidVIN(true);
+    
     detectUserCountry();
     
     let progress = 0;
@@ -99,7 +120,7 @@ const VehicleReport = ({ vin, onBack }) => {
       clearInterval(progressInterval);
       clearInterval(checkInterval);
     };
-  }, []);
+  }, [vin, navigate]);
 
   const detectUserCountry = async () => {
     try {
@@ -205,11 +226,9 @@ const VehicleReport = ({ vin, onBack }) => {
 
   const handlePlanSelect = (plan) => {
     setSelectedPlan(plan);
-    // Show payment modal immediately
     setShowPaymentModal(true);
   };
 
-  // Update this function to accept email parameter
   const handlePaymentSuccess = (email) => {
     setUserEmail(email);
     setShowPaymentModal(false);
@@ -217,234 +236,341 @@ const VehicleReport = ({ vin, onBack }) => {
     
     console.log(`Payment successful for ${selectedPlan.name} plan. Email: ${email}`);
     
-    // In a real app, you would send the report via email here
-    // You can make an API call to your backend to send the email
-    
-    // For demo purposes, just show success
     alert(`Payment successful! Report will be sent to ${email} shortly.`);
   };
 
   const goBack = () => {
-    onBack();
+    navigate('/', { state: { shouldFocusInput: true } });
+  };
+
+  // Function to navigate to Full Vehicle History page
+  const viewFullHistory = () => {
+    navigate('/full-vehicle-history', {
+      state: {
+        vin: vin,
+        vehicleData: vehicleData,
+        plan: selectedPlan || basePlans[2] // Default to premium if no plan selected
+      }
+    });
+  };
+
+  // Function to navigate to Full Vehicle History with a specific plan
+  const viewFullHistoryWithPlan = (plan) => {
+    navigate('/full-vehicle-history', {
+      state: {
+        vin: vin,
+        vehicleData: vehicleData,
+        plan: plan
+      }
+    });
   };
 
   const currency = currencies[userCountry] || currencies.default;
 
   return (
-    <div className="vehicle-report-container">
-      <div className="report-header">
-        <h1>Vehicle History Report</h1>
-        <p className="vin-display">VIN: <span>{vin}</span></p>
-      </div>
-
-      {!showResults ? (
-        <div className="loading-section">
-          <div className="loading-header">
-            <h2>Searching Vehicle Records for VIN {vin}</h2>
-            <div className="progress-percentage">{Math.round(loadingProgress)}%</div>
+    <div className="vehicle-report-page">
+      {/* Navigation Bar */}
+      <nav className="report-nav">
+        <div className="nav-container">
+          <div className="logo" onClick={goBack} style={{ cursor: 'pointer' }}>
+            <span className="logo-icon">🚗</span>
+            <span className="logo-text">VIN Decoder Pro</span>
           </div>
-          
-          <div className="progress-container">
-            <div className="progress-bar" style={{ width: `${loadingProgress}%` }}></div>
-            <div className="progress-text">Please Wait...</div>
-          </div>
-          
-          <div className="scanning-text">
-            <h3>Scanning Vehicle Databases:</h3>
-          </div>
-          
-          <div className="checks-grid">
-            {checks.map((check, index) => (
-              <div 
-                key={check.id} 
-                className={`check-item ${index === activeCheck ? 'active' : ''}`}
-                style={{ 
-                  borderColor: check.color,
-                  backgroundColor: index === activeCheck ? `${check.color}15` : '#f8f9fa'
-                }}
-              >
-                <div className="check-icon" style={{ color: check.color }}>
-                  {check.icon}
-                </div>
-                <div className="check-name">{check.name}</div>
-                {index === activeCheck && (
-                  <div className="checking-indicator">Checking...</div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : showPaymentSuccess ? (
-        <PaymentSuccess 
-          vehicleData={vehicleData}
-          selectedPlan={selectedPlan}
-          userEmail={userEmail}
-          onBack={goBack}
-        />
-      ) : (
-        <div className="results-section">
-          <div className="results-header">
-            <h2>Vehicle Report Preview</h2>
-            <p className="report-date">Limited preview • Full report requires purchase</p>
-          </div>
-          
-          {vehicleData && (
-            <div className="vehicle-details">
-              <div className="detail-section">
-                <h3>Basic Vehicle Information (FREE)</h3>
-                <div className="detail-grid">
-                  <div className="detail-item">
-                    <span className="detail-label">Year:</span>
-                    <span className="detail-value">{vehicleData.year}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Make:</span>
-                    <span className="detail-value">{vehicleData.make}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Model:</span>
-                    <span className="detail-value">{vehicleData.model}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Trim:</span>
-                    <span className="detail-value">{vehicleData.trim}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Body Style:</span>
-                    <span className="detail-value">{vehicleData.bodyStyle}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Vehicle Type:</span>
-                    <span className="detail-value">{vehicleData.vehicleType}</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="detail-section">
-                <h3>Technical Specifications (FREE)</h3>
-                <div className="detail-grid">
-                  <div className="detail-item">
-                    <span className="detail-label">Engine:</span>
-                    <span className="detail-value">{vehicleData.engine}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Transmission:</span>
-                    <span className="detail-value">{vehicleData.transmission}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Drive Type:</span>
-                    <span className="detail-value">{vehicleData.driveType}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-label">Fuel Type:</span>
-                    <span className="detail-value">{vehicleData.fuelType}</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="detail-section locked-section">
-                <h3>⚠️ Locked Information - Purchase Required</h3>
-                <div className="detail-grid">
-                  <div className="detail-item locked">
-                    <span className="detail-label">Accident History:</span>
-                    <span className="detail-value">{vehicleData.accidentHistory}</span>
-                  </div>
-                  <div className="detail-item locked">
-                    <span className="detail-label">Title Records:</span>
-                    <span className="detail-value">{vehicleData.titleRecords}</span>
-                  </div>
-                  <div className="detail-item locked">
-                    <span className="detail-label">Odometer Reading:</span>
-                    <span className="detail-value">{vehicleData.odometerReading}</span>
-                  </div>
-                  <div className="detail-item locked">
-                    <span className="detail-label">Sales History:</span>
-                    <span className="detail-value">{vehicleData.salesHistory}</span>
-                  </div>
-                  <div className="detail-item locked">
-                    <span className="detail-label">Market Value:</span>
-                    <span className="detail-value">{vehicleData.marketValue}</span>
-                  </div>
-                  <div className="detail-item locked">
-                    <span className="detail-label">Recall Information:</span>
-                    <span className="detail-value">{vehicleData.recallInfo}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {showPricingPlans && (
-            <div className="pricing-plans-section">
-              <h3>Unlock Full Vehicle History Report</h3>
-              <p className="pricing-subtitle">Choose a plan to access complete vehicle information</p>
-              
-              <div className="pricing-plans-grid">
-                {basePlans.map((plan) => {
-                  const price = (plan.price * currency.rate).toFixed(2);
-                  return (
-                    <div 
-                      key={plan.id}
-                      className={`pricing-plan-card ${selectedPlan?.id === plan.id ? 'selected' : ''}`}
-                      onClick={() => handlePlanSelect(plan)}
-                      style={{ borderColor: plan.color }}
-                    >
-                      <div className="plan-header" style={{ backgroundColor: `${plan.color}20` }}>
-                        <h4>{plan.name}</h4>
-                        <div className="plan-price">
-                          <span className="currency">{currency.symbol}</span>
-                          <span className="amount">{price}</span>
-                          <span className="period">{plan.id === 'premium' ? '/30 days' : '/report'}</span>
-                        </div>
-                      </div>
-                      <div className="plan-features">
-                        <ul>
-                          {plan.features.map((feature, index) => (
-                            <li key={index}>
-                              <span className="feature-icon">✓</span>
-                              {feature}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <button 
-                        className="select-plan-btn"
-                        style={{ backgroundColor: plan.color }}
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent event bubbling
-                          handlePlanSelect(plan);
-                        }}
-                      >
-                        {selectedPlan?.id === plan.id ? 'Selected' : 'Select Plan'}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-              
-              <div className="currency-notice">
-                <p>Prices shown in {currency.code} based on your location</p>
-              </div>
-            </div>
-          )}
-          
-          <div className="action-buttons">
-            <button className="btn back-btn" onClick={goBack}>
-              Search Another VIN
+          <div className="nav-buttons">
+            <button className="nav-back-btn" onClick={goBack}>
+              ← Back to Search
             </button>
           </div>
         </div>
-      )}
-      
-      {showPaymentModal && selectedPlan && (
-        <PaymentModal
-          vehicleData={vehicleData || { year: '—', make: '—', model: '—' }}
-          selectedPlan={selectedPlan}
-          currency={currency}
-          onClose={() => setShowPaymentModal(false)}
-          onPaymentSuccess={handlePaymentSuccess}
-        />
-      )}
+      </nav>
+
+      <div className="vehicle-report-container">
+        {!hasValidVIN ? (
+          <div className="error-section">
+            <div className="error-content">
+              <h2>❌ Invalid or Missing VIN</h2>
+              <p>No valid VIN number found. Please enter a VIN on the main page.</p>
+              <p>Redirecting to home page in 3 seconds...</p>
+              <button className="btn back-btn" onClick={goBack}>
+                Go Back Now
+              </button>
+            </div>
+          </div>
+        ) : !showResults ? (
+          <div className="loading-section">
+            <div className="loading-header">
+              <h2>Searching Vehicle Records for VIN {vin}</h2>
+              <div className="progress-percentage">{Math.round(loadingProgress)}%</div>
+            </div>
+            
+            <div className="progress-container">
+              <div className="progress-bar" style={{ width: `${loadingProgress}%` }}></div>
+              <div className="progress-text">Please Wait...</div>
+            </div>
+            
+            <div className="scanning-text">
+              <h3>Scanning Vehicle Databases:</h3>
+            </div>
+            
+            <div className="checks-grid">
+              {checks.map((check, index) => (
+                <div 
+                  key={check.id} 
+                  className={`check-item ${index === activeCheck ? 'active' : ''}`}
+                  style={{ 
+                    borderColor: check.color,
+                    backgroundColor: index === activeCheck ? `${check.color}15` : '#f8f9fa'
+                  }}
+                >
+                  <div className="check-icon" style={{ color: check.color }}>
+                    {check.icon}
+                  </div>
+                  <div className="check-name">{check.name}</div>
+                  {index === activeCheck && (
+                    <div className="checking-indicator">Checking...</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : showPaymentSuccess ? (
+          <PaymentSuccess 
+            vehicleData={vehicleData}
+            selectedPlan={selectedPlan}
+            userEmail={userEmail}
+            onBack={goBack}
+            onViewFullHistory={viewFullHistory}
+          />
+        ) : (
+          <div className="results-section">
+            <div className="results-header">
+              <h2>Vehicle Report Preview</h2>
+              <p className="report-date">Limited preview • Full report requires purchase</p>
+            </div>
+            
+            {vehicleData && (
+              <div className="vehicle-details">
+                <div className="detail-section">
+                  <h3>Basic Vehicle Information (FREE)</h3>
+                  <div className="detail-grid">
+                    <div className="detail-item">
+                      <span className="detail-label">Year:</span>
+                      <span className="detail-value">{vehicleData.year}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Make:</span>
+                      <span className="detail-value">{vehicleData.make}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Model:</span>
+                      <span className="detail-value">{vehicleData.model}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Trim:</span>
+                      <span className="detail-value">{vehicleData.trim}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Body Style:</span>
+                      <span className="detail-value">{vehicleData.bodyStyle}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Vehicle Type:</span>
+                      <span className="detail-value">{vehicleData.vehicleType}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="detail-section">
+                  <h3>Technical Specifications (FREE)</h3>
+                  <div className="detail-grid">
+                    <div className="detail-item">
+                      <span className="detail-label">Engine:</span>
+                      <span className="detail-value">{vehicleData.engine}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Transmission:</span>
+                      <span className="detail-value">{vehicleData.transmission}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Drive Type:</span>
+                      <span className="detail-value">{vehicleData.driveType}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Fuel Type:</span>
+                      <span className="detail-value">{vehicleData.fuelType}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Doors:</span>
+                      <span className="detail-value">{vehicleData.doors}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Seats:</span>
+                      <span className="detail-value">{vehicleData.seats}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="detail-section">
+                  <h3>Manufacturing Details (FREE)</h3>
+                  <div className="detail-grid">
+                    <div className="detail-item">
+                      <span className="detail-label">Manufactured In:</span>
+                      <span className="detail-value">{vehicleData.country}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Brake System:</span>
+                      <span className="detail-value">{vehicleData.brakeSystem}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Tire Size:</span>
+                      <span className="detail-value">{vehicleData.tires}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Warranty Info:</span>
+                      <span className="detail-value">{vehicleData.warranty}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="detail-section locked-section">
+                  <h3>⚠️ Locked Information - Purchase Required</h3>
+                  <div className="detail-grid">
+                    <div className="detail-item locked">
+                      <span className="detail-label">Accident History:</span>
+                      <span className="detail-value">{vehicleData.accidentHistory}</span>
+                    </div>
+                    <div className="detail-item locked">
+                      <span className="detail-label">Title Records:</span>
+                      <span className="detail-value">{vehicleData.titleRecords}</span>
+                    </div>
+                    <div className="detail-item locked">
+                      <span className="detail-label">Odometer Reading:</span>
+                      <span className="detail-value">{vehicleData.odometerReading}</span>
+                    </div>
+                    <div className="detail-item locked">
+                      <span className="detail-label">Sales History:</span>
+                      <span className="detail-value">{vehicleData.salesHistory}</span>
+                    </div>
+                    <div className="detail-item locked">
+                      <span className="detail-label">Market Value:</span>
+                      <span className="detail-value">{vehicleData.marketValue}</span>
+                    </div>
+                    <div className="detail-item locked">
+                      <span className="detail-label">Recall Information:</span>
+                      <span className="detail-value">{vehicleData.recallInfo}</span>
+                    </div>
+                    <div className="detail-item locked">
+                      <span className="detail-label">Theft Records:</span>
+                      <span className="detail-value">{vehicleData.theftRecords}</span>
+                    </div>
+                    <div className="detail-item locked">
+                      <span className="detail-label">Insurance Records:</span>
+                      <span className="detail-value">{vehicleData.insuranceRecords}</span>
+                    </div>
+                    <div className="detail-item locked">
+                      <span className="detail-label">Previous Owners:</span>
+                      <span className="detail-value">{vehicleData.previousOwners}</span>
+                    </div>
+                    <div className="detail-item locked">
+                      <span className="detail-label">Service History:</span>
+                      <span className="detail-value">{vehicleData.serviceHistory}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {showPricingPlans && (
+              <div className="pricing-plans-section">
+                <h3>Unlock Full Vehicle History Report</h3>
+                <p className="pricing-subtitle">Choose a plan to access complete vehicle information</p>
+                
+                <div className="pricing-plans-grid">
+                  {basePlans.map((plan) => {
+                    const price = (plan.price * currency.rate).toFixed(2);
+                    return (
+                      <div 
+                        key={plan.id}
+                        className={`pricing-plan-card ${selectedPlan?.id === plan.id ? 'selected' : ''}`}
+                        onClick={() => handlePlanSelect(plan)}
+                        style={{ borderColor: plan.color }}
+                      >
+                        <div className="plan-header" style={{ backgroundColor: `${plan.color}20` }}>
+                          <h4>{plan.name}</h4>
+                          <div className="plan-price">
+                            <span className="currency">{currency.symbol}</span>
+                            <span className="amount">{price}</span>
+                            <span className="period">{plan.id === 'premium' ? '/30 days' : '/report'}</span>
+                          </div>
+                        </div>
+                        <div className="plan-features">
+                          <ul>
+                            {plan.features.map((feature, index) => (
+                              <li key={index}>
+                                <span className="feature-icon">✓</span>
+                                {feature}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="plan-actions">
+                          <button 
+                            className="select-plan-btn"
+                            style={{ backgroundColor: plan.color }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePlanSelect(plan);
+                            }}
+                          >
+                            {selectedPlan?.id === plan.id ? 'Selected' : 'Select Plan'}
+                          </button>
+                          {plan.id === 'premium' && (
+                            <button 
+                              className="view-full-history-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                viewFullHistoryWithPlan(plan);
+                              }}
+                            >
+                              📋 Preview Full Report
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                
+                <div className="currency-notice">
+                  <p>Prices shown in {currency.code} based on your location</p>
+                </div>
+              </div>
+            )}
+            
+            <div className="action-buttons">
+              <button className="btn back-btn" onClick={goBack}>
+                ← Back to Search
+              </button>
+              
+            </div>
+          </div>
+        )}
+        
+        {showPaymentModal && selectedPlan && (
+          <PaymentModal
+            vehicleData={vehicleData || { year: '—', make: '—', model: '—' }}
+            selectedPlan={selectedPlan}
+            currency={currency}
+            onClose={() => setShowPaymentModal(false)}
+            onPaymentSuccess={handlePaymentSuccess}
+          />
+        )}
+        
+        {/* Floating cars background */}
+        <div className="floating-car-report">🚗</div>
+        <div className="floating-car-report">🏎️</div>
+        <div className="floating-car-report">🚙</div>
+      </div>
     </div>
   );
 };

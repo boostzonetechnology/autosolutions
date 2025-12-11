@@ -7,37 +7,37 @@ const AboutUs = () => {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const aboutFeatures = [
-    { 
-      title: "Full Inspection", 
-      icon: "🔍",
-      description: "Comprehensive 300+ point vehicle inspection",
-      color: "#FFD700"
-    },
-    { 
-      title: "All In Data", 
-      icon: "📊",
-      description: "Complete vehicle history from multiple sources",
-      color: "#2196F3"
-    },
-    { 
-      title: "Car Based", 
-      icon: "🚗",
-      description: "Vehicle-specific insights and analytics",
-      color: "#4CAF50"
-    },
-    { 
-      title: "All Features", 
-      icon: "⚙️",
-      description: "Access to premium reporting features",
-      color: "#FF6B6B"
-    },
-    { 
-      title: "Recommendation", 
-      icon: "💡",
-      description: "Personalized insights and suggestions",
-      color: "#9C27B0"
-    }
-  ];
+  { 
+    title: "Full Inspection", 
+    icon: "🔍",
+    description: "Comprehensive 300+ point vehicle inspection",
+    color: "var(--secondary-color)"  // Changed to secondary
+  },
+  { 
+    title: "All In Data", 
+    icon: "📊",
+    description: "Complete vehicle history from multiple sources",
+    color: "var(--primary-color)"   // Changed to primary
+  },
+  { 
+    title: "Car Based", 
+    icon: "🚗",
+    description: "Vehicle-specific insights and analytics",
+    color: "var(--tertiary-color)"  // Changed to tertiary
+  },
+  { 
+    title: "All Features", 
+    icon: "⚙️",
+    description: "Access to premium reporting features",
+    color: "var(--primary-color)"   // Changed to primary (was #FF6B6B)
+  },
+  { 
+    title: "Recommendation", 
+    icon: "💡",
+    description: "Personalized insights and suggestions",
+    color: "var(--secondary-color)" // Changed to secondary (was #9C27B0)
+  }
+];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -120,18 +120,27 @@ const AboutUs = () => {
           {/* Section Header */}
           <div className="about-header">
             <h2 className="about-title">
-              <span className="about-title-text">
-                {["A", "B", "O", "U", "T", " ", "U", "S"].map((letter, index) => (
-                  <span 
-                    key={index} 
-                    className="about-letter"
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    {letter}
-                  </span>
-                ))}
-              </span>
-            </h2>
+  <span className="about-title-text">
+    {["ABOUT", "US"].map((word, wordIndex) => (
+      <span 
+        key={wordIndex} 
+        className="word"
+        style={{ marginRight: wordIndex < 1 ? '15px' : '0' }} // space between words
+      >
+        {word.split('').map((letter, letterIndex) => (
+          <span 
+            key={letterIndex} 
+            className="about-letter"
+            style={{ animationDelay: `${letterIndex * 0.1 + wordIndex * 0.3}s` }}
+          >
+            {letter}
+          </span>
+        ))}
+      </span>
+    ))}
+  </span>
+</h2>
+
             
             <div className="about-underline">
               <div className="underline-bar"></div>
@@ -233,13 +242,6 @@ const AboutUs = () => {
           </div>
 
           {/* CTA Button */}
-          <div className="about-cta">
-            <button className="learn-more-btn">
-              <span className="btn-text">Learn More About Us</span>
-              <span className="btn-arrow">→</span>
-              <div className="btn-shine"></div>
-            </button>
-          </div>
         </div>
       </div>
     </section>

@@ -19,24 +19,17 @@ const Footer = () => {
             <p className="company-description">
               We provide reliable vehicle history reports by entering a VIN number. Get accurate data on accident history, mileage, title status, and more to make informed decisions.
             </p>
-            
-            {/* Red Card Image Section */}
-            <div className="red-card-section">
-              <div className="card-image-container">
-                
-                <div className="card-glow"></div>
-              </div>
-              <div className="card-info">
-                <h4>Premium VIN Verification Card</h4>
-                <p>Get your exclusive verification card for trusted vehicle history reports</p>
-                <button className="get-card-btn">
-                  <i className="fas fa-credit-card"></i>
-                  Get Your Card
-                </button>
-              </div>
-            </div>
+          {/* Payment Methods */}
+          <div className="payment-methods">
+            <i className="fab fa-cc-visa" title="Visa"></i>
+            <i className="fab fa-cc-mastercard" title="Mastercard"></i>
+            <i className="fab fa-cc-amex" title="American Express"></i>
+            <i className="fab fa-cc-discover" title="Discover"></i>
+            <i className="fab fa-cc-paypal" title="PayPal"></i>
+            <i className="fas fa-university" title="Bank Transfer"></i>
           </div>
-
+          </div>
+          
           {/* Middle Column - Quick Links */}
           <div className="footer-column">
             <h3 className="footer-title">
@@ -192,16 +185,6 @@ const Footer = () => {
             <p className="disclaimer">
               This service provides vehicle history reports and is not affiliated with any government agency.
             </p>
-          </div>
-
-          {/* Payment Methods */}
-          <div className="payment-methods">
-            <i className="fab fa-cc-visa" title="Visa"></i>
-            <i className="fab fa-cc-mastercard" title="Mastercard"></i>
-            <i className="fab fa-cc-amex" title="American Express"></i>
-            <i className="fab fa-cc-discover" title="Discover"></i>
-            <i className="fab fa-cc-paypal" title="PayPal"></i>
-            <i className="fas fa-university" title="Bank Transfer"></i>
           </div>
         </div>
 

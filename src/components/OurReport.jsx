@@ -7,47 +7,47 @@ const OurReport = () => {
   const [hoveredReport, setHoveredReport] = useState(null);
 
   const reports = [
-    { 
-      title: "Mileage", 
-      icon: "📊",
-      description: "Accurate mileage verification and tracking",
-      value: "98.5%",
-      color: "#FF6B6B",
-      position: "top-left"
-    },
-    { 
-      title: "NHTSA Recalls & Complaints", 
-      icon: "⚠️",
-      description: "Official recall and safety complaint data",
-      value: "100%",
-      color: "#FF8E53",
-      position: "top-right"
-    },
-    { 
-      title: "Accidents", 
-      icon: "🚨",
-      description: "Comprehensive accident history reports",
-      value: "99.2%",
-      color: "#4ECDC4",
-      position: "bottom-left"
-    },
-    { 
-      title: "Title Record", 
-      icon: "📝",
-      description: "Complete title and ownership history",
-      value: "100%",
-      color: "#45B7D1",
-      position: "bottom-right"
-    },
-    { 
-      title: "Problem Checks", 
-      icon: "🔍",
-      description: "Detailed problem and issue detection",
-      value: "97.8%",
-      color: "#96CEB4",
-      position: "bottom-center"
-    }
-  ];
+  { 
+    title: "Mileage", 
+    icon: "📊",
+    description: "Accurate mileage verification and tracking",
+    value: "98.5%",
+    color: "var(--primary-color)",      // Changed to primary
+    position: "top-left"
+  },
+  { 
+    title: "NHTSA Recalls & Complaints", 
+    icon: "⚠️",
+    description: "Official recall and safety complaint data",
+    value: "100%",
+    color: "var(--secondary-color)",    // Changed to secondary
+    position: "top-right"
+  },
+  { 
+    title: "Accidents", 
+    icon: "🚨",
+    description: "Comprehensive accident history reports",
+    value: "99.2%",
+    color: "var(--tertiary-color)",     // Changed to tertiary
+    position: "bottom-left"
+  },
+  { 
+    title: "Title Record", 
+    icon: "📝",
+    description: "Complete title and ownership history",
+    value: "100%",
+    color: "var(--primary-color)",      // Changed to primary
+    position: "bottom-right"
+  },
+  { 
+    title: "Problem Checks", 
+    icon: "🔍",
+    description: "Detailed problem and issue detection",
+    value: "97.8%",
+    color: "var(--secondary-color)",    // Changed to secondary
+    position: "bottom-center"
+  }
+];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -97,18 +97,27 @@ const OurReport = () => {
       {/* Section Header */}
       <div className="reports-header">
         <h2 className="reports-title">
-          <span className="reports-title-text">
-            {["O", "U", "R", " ", "R", "E", "P", "O", "R", "T"].map((letter, index) => (
-              <span 
-                key={index} 
-                className="reports-letter"
-                style={{ animationDelay: `${index * 0.08}s` }}
-              >
-                {letter}
-              </span>
-            ))}
+  <span className="reports-title-text">
+    {["OUR", "REPORT"].map((word, wordIndex) => (
+      <span 
+        key={wordIndex} 
+        className="word"
+        style={{ marginRight: wordIndex < 1 ? '15px' : '0' }} // space between words
+      >
+        {word.split('').map((letter, letterIndex) => (
+          <span 
+            key={letterIndex} 
+            className="reports-letter"
+            style={{ animationDelay: `${letterIndex * 0.08 + wordIndex * 0.3}s` }}
+          >
+            {letter}
           </span>
-        </h2>
+        ))}
+      </span>
+    ))}
+  </span>
+</h2>
+
         
         <div className="reports-subtitle-container">
           <div className="reports-underline">
@@ -302,16 +311,7 @@ const OurReport = () => {
       </div>
 
       {/* CTA Button */}
-      <div className="reports-cta">
-        <button className="sample-report-btn">
-          <span className="btn-content">
-            <span className="btn-main">View Sample Report</span>
-            <span className="btn-sub">See what you'll get</span>
-          </span>
-          <span className="btn-arrow">→</span>
-          <div className="btn-shine"></div>
-        </button>
-      </div>
+
     </section>
   );
 };

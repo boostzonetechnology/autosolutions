@@ -267,16 +267,16 @@ nav {
     justify-content: space-between;
     align-items: center;
     z-index: 1000;
-    background: rgba(10, 10, 26, 0.9);
+    background: rgba(10, 10, 26, 0);
     backdrop-filter: blur(10px);
-    border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+    border-bottom: 2px solid rgba(255, 217, 0, 0);
     animation: slideDown 0.8s ease-out;
 }
 
 nav.sticky {
-    background: rgba(0, 0, 30, 0.98);
+    background: rgba(0, 0, 0, 0);
     padding: 15px 60px;
-    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(255, 217, 0, 0);
 }
 
 /* Desktop Navigation */
@@ -573,7 +573,7 @@ nav .logo img {
     align-items: center;
     text-align: center;
     color: white;
-    padding: 120px 20px 40px;
+    padding: 215px 20px 40px;
     position: relative;
     overflow: hidden;
     animation: heroBackgroundShift 20s infinite alternate ease-in-out;

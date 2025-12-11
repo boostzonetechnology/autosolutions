@@ -81,16 +81,21 @@ const WhyChooseUs = () => {
       <div className="why-header">
         <h2 className="heading">
           <span className="heading-text">
-            {["W", "H", "Y", " ", "C", "H", "O", "O", "S", "E", " ", "U", "S"].map((letter, index) => (
-              <span 
-                key={index} 
-                className="heading-letter"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                {letter}
-              </span>
-            ))}
-          </span>
+          {["WHY", "CHOOSE", "US"].map((word, wordIndex) => (
+            <span key={wordIndex} className="word" style={{ marginRight: wordIndex < 2 ? '10px' : '0' }}>
+              {word.split('').map((letter, letterIndex) => (
+                <span
+                  key={letterIndex}
+                  className="heading-letter"
+                  style={{ animationDelay: `${letterIndex * 0.1 + wordIndex * 0.3}s` }}
+                >
+                  {letter}
+                </span>
+              ))}
+            </span>
+          ))}
+        </span>
+
         </h2>
         
         <div className="heading-underline">
@@ -161,22 +166,7 @@ const WhyChooseUs = () => {
               </div>
 
               {/* Interactive Elements */}
-              <div className="card-actions">
-                <button className="learn-more-btn">
-                  <span>Learn More</span>
-                  <span className="arrow">→</span>
-                </button>
-                
-                <div className="progress-indicator">
-                  <div className="progress-bar">
-                    <div 
-                      className="progress-fill"
-                      style={{ width: hoveredCard === idx ? '100%' : '0%' }}
-                    ></div>
-                  </div>
-                  <span className="progress-text">Explore Feature</span>
-                </div>
-              </div>
+              
             </div>
 
             {/* Decorative Elements */}

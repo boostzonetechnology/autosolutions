@@ -70,7 +70,7 @@
   opacity: 0;
   transform: translateY(30px) scale(0.5);
   animation: reportLetterPop 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
-  background: linear-gradient(90deg, #FF6B6B, #FF8E53, #4ECDC4);
+  background: linear-gradient(90deg, #FFD700, #FF8C00);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -100,14 +100,14 @@
 .reports-line {
   width: 60px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #FF6B6B, transparent);
+  background: linear-gradient(90deg, #FFD700, #FF8C00);
   animation: reportLineExtend 1.5s ease forwards;
 }
 
 .reports-dot {
   width: 10px;
   height: 10px;
-  background: #FF6B6B;
+  background: linear-gradient(90deg, #FFD700, #FF8C00);
   border-radius: 50%;
   animation: reportDotPulse 2s infinite;
 }
@@ -163,7 +163,7 @@
   align-items: center;
   gap: 10px;
   padding: 10px 25px;
-  background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+  background: linear-gradient(90deg, #FFD700, #FF8C00);
   border-radius: 50px;
   margin-top: 20px;
   position: relative;

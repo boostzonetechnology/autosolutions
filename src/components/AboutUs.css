@@ -290,7 +290,7 @@
   opacity: 0;
   transform: translateY(30px) rotateX(-30deg);
   animation: aboutLetterDrop 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
-  background: linear-gradient(90deg, #FFD700, #2196F3, #4CAF50);
+  background: linear-gradient(90deg, #FFD700, #FF8C00);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
