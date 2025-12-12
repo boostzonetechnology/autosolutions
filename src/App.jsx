@@ -9,6 +9,9 @@ import OurMission from "./components/OurMission";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import VehicleReport from "./components/VehicleReport";
+import PlansPage from "./components/PlansPage";
+import CheckoutPage from "./components/CheckoutPage";
+import PaymentSuccessPage from "./components/PaymentSuccessPage";
 import './components/styles.css';
 
 // HomePage component that contains all your main sections
@@ -58,6 +61,9 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/vehicle-report" element={<VehicleReport />} />
+        <Route path="/plans" element={<PlansPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/payment-success" element={<PaymentSuccessPage />} />
         {/* Optional: Add a catch-all route for 404 */}
         <Route path="*" element={<HomePage />} />
       </Routes>

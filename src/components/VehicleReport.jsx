@@ -1,208 +1,133 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./VehicleReport.css";
-import PaymentModal from './PaymentModal';
-import PaymentSuccess from './PaymentSuccess';
 
 const VehicleReport = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  
-  // Get VIN from location state or redirect to home
-  const vin = location.state?.vin || '';
-  
+
+  const vin = location.state?.vin || "";
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [vehicleData, setVehicleData] = useState(null);
   const [activeCheck, setActiveCheck] = useState(0);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
-  const [showPricingPlans, setShowPricingPlans] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState(null);
-  const [userCountry, setUserCountry] = useState('US');
-  const [userEmail, setUserEmail] = useState('');
   const [hasValidVIN, setHasValidVIN] = useState(true);
-  
+  const [checksCompleted, setChecksCompleted] = useState(0);
+
   const checks = [
-    { id: 1, name: "Accidents", icon: "🚗", color: "#FF6B6B" },
-    { id: 2, name: "Values", icon: "💰", color: "#4ECDC4" },
-    { id: 3, name: "Title Records", icon: "📄", color: "#45B7D1" },
-    { id: 4, name: "Recalls", icon: "⚠️", color: "#F9C846" },
-    { id: 5, name: "Problem Checks", icon: "🔍", color: "#96CEB4" },
-    { id: 6, name: "Specs", icon: "⚙️", color: "#FF8E72" },
-    { id: 7, name: "Sales History", icon: "📈", color: "#A593E0" },
-    { id: 8, name: "Odometer", icon: "📏", color: "#5DADE2" },
-    { id: 9, name: "Salvage Records", icon: "🔧", color: "#58D68D" }
-  ];
-
-  const currencies = {
-    US: { code: 'USD', symbol: '$', rate: 1 },
-    CA: { code: 'CAD', symbol: '$', rate: 1.35 },
-    GB: { code: 'GBP', symbol: '£', rate: 0.79 },
-    AU: { code: 'AUD', symbol: '$', rate: 1.52 },
-    default: { code: 'USD', symbol: '$', rate: 1 }
-  };
-
-  const basePlans = [
-    {
-      id: 'basic',
-      name: 'Basic Report',
-      price: 1.95,
-      features: [
-        'Basic vehicle specs',
-        'Year, Make, Model info',
-        'Engine details',
-        'Transmission type'
-      ],
-      color: '#4ECDC4'
-    },
-    {
-      id: 'standard',
-      name: 'Standard Report',
-      price: 4.95,
-      features: [
-        'Everything in Basic',
-        'Accident history',
-        'Title records',
-        'Odometer reading',
-        'Recall information'
-      ],
-      color: '#45B7D1'
-    },
-    {
-      id: 'premium',
-      name: 'Premium Report',
-      price: 9.95,
-      features: [
-        'Everything in Standard',
-        'Full vehicle history',
-        'Sales records',
-        'Market values',
-        'Unlimited access for 30 days',
-        'Export to PDF'
-      ],
-      color: '#FF6B6B'
-    }
+    { name: "Accidents", icon: "🚗", color: "#EF4444" },
+    { name: "Values", icon: "💰", color: "#10B981" },
+    { name: "Title Records", icon: "📄", color: "#3B82F6" },
+    { name: "Recalls", icon: "⚠️", color: "#F59E0B" },
+    { name: "Odometer", icon: "📏", color: "#8B5CF6" },
+    { name: "Specs", icon: "⚙️", color: "#EC4899" },
+    { name: "Sales History", icon: "📈", color: "#6366F1" },
+    { name: "Salvage Records", icon: "🔧", color: "#06B6D4" }
   ];
 
   useEffect(() => {
-    // Check if we have a valid VIN
     if (!vin || vin.length < 5) {
       setHasValidVIN(false);
-      
-      // Show error message for a moment then redirect
-      setTimeout(() => {
-        navigate('/', { state: { shouldFocusInput: true } });
-      }, 3000);
+      setTimeout(() => navigate("/", { state: { shouldFocusInput: true } }), 3000);
       return;
     }
-    
-    setHasValidVIN(true);
-    
-    detectUserCountry();
-    
+
     let progress = 0;
     const progressInterval = setInterval(() => {
       progress += Math.random() * 15;
-      if (progress > 99) {
-        progress = 99;
+      if (progress > 98) {
+        progress = 98;
         clearInterval(progressInterval);
         fetchVehicleData();
       }
       setLoadingProgress(progress);
+      
+      // Update completed checks based on progress
+      const completed = Math.floor((progress / 100) * checks.length);
+      setChecksCompleted(completed);
     }, 300);
 
     const checkInterval = setInterval(() => {
-      setActiveCheck(prev => (prev + 1) % checks.length);
+      setActiveCheck((prev) => (prev + 1) % checks.length);
     }, 600);
 
     return () => {
       clearInterval(progressInterval);
       clearInterval(checkInterval);
     };
-  }, [vin, navigate]);
+  }, [vin]);
 
-  const detectUserCountry = async () => {
-    try {
-      const response = await fetch('https://ipapi.co/json/');
-      const data = await response.json();
-      setUserCountry(data.country_code);
-    } catch (error) {
-      console.error('Error detecting country:', error);
-      setUserCountry('US');
-    }
+  const buildFallbackData = () => ({
+    year: "—",
+    makeModel: "—",
+    trim: "—",
+    driveType: "—",
+    brakeSystem: "—",
+    engine: "—",
+    manufactured: "—",
+    bodyStyle: "—",
+    tires: "—",
+    transmission: "—",
+    warranty: "NOT ON FILE",
+    msrp: "NOT ON FILE",
+    accidentHistory: "LOCKED 🔒",
+    titleRecords: "LOCKED 🔒",
+    odometerReading: "LOCKED 🔒",
+    salesHistory: "LOCKED 🔒",
+    marketValue: "LOCKED 🔒",
+    recallInfo: "LOCKED 🔒",
+    theftRecords: "LOCKED 🔒",
+    insuranceRecords: "LOCKED 🔒",
+    previousOwners: "LOCKED 🔒",
+    serviceHistory: "LOCKED 🔒"
+  });
+
+  const cleanValue = (val, fallback = "NOT ON FILE") => {
+    if (!val || val === "NULL" || val === "null" || val === "undefined") return fallback;
+    return String(val).trim();
   };
 
   const fetchVehicleData = async () => {
     try {
-      const url = `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesExtended/${encodeURIComponent(vin)}?format=json`;
+      const url = `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesExtended/${encodeURIComponent(
+        vin
+      )}?format=json`;
+
       const res = await fetch(url);
       const data = await res.json();
-      const vehicle = data?.Results?.[0];
+      const v = data?.Results?.[0];
 
-      if (vehicle) {
-        const formattedData = {
-          year: vehicle.ModelYear || "—",
-          make: vehicle.Make || "—",
-          model: vehicle.Model || "—",
-          trim: vehicle.Trim || "—",
-          driveType: vehicle.DriveType || "—",
-          brakeSystem: vehicle.BrakeSystemType || "—",
-          engine: `${vehicle.DisplacementL || ""}L ${vehicle.EngineCylinders || ""} Cyl ${vehicle.EngineModel || ""}`.trim() || "—",
-          manufactured: vehicle.PlantCountry || "—",
-          bodyStyle: vehicle.BodyClass || "—",
-          tires: vehicle.TireSize || vehicle.WheelSizeFront || "—",
-          transmission: vehicle.TransmissionStyle || vehicle.TransmissionDescriptor || "—",
-          warranty: "NOT ON FILE",
-          msrp: "NOT ON FILE",
-          doors: vehicle.Doors || "—",
-          seats: vehicle.Seats || "—",
-          fuelType: vehicle.FuelTypePrimary || "—",
-          country: vehicle.PlantCountry || "—",
-          vehicleType: vehicle.VehicleType || "—",
-          accidentHistory: "LOCKED 🔒",
-          titleRecords: "LOCKED 🔒",
-          odometerReading: "LOCKED 🔒",
-          salesHistory: "LOCKED 🔒",
-          marketValue: "LOCKED 🔒",
-          recallInfo: "LOCKED 🔒",
-          theftRecords: "LOCKED 🔒",
-          insuranceRecords: "LOCKED 🔒",
-          previousOwners: "LOCKED 🔒",
-          serviceHistory: "LOCKED 🔒"
-        };
-        
-        setVehicleData(formattedData);
-        setLoadingProgress(100);
-        
-        setTimeout(() => {
-          setShowResults(true);
-          setTimeout(() => {
-            setShowPricingPlans(true);
-          }, 500);
-        }, 800);
+      if (!v) {
+        setVehicleData(buildFallbackData());
+        return;
       }
-    } catch (error) {
-      console.error("Error fetching vehicle data:", error);
-      setVehicleData({
-        year: "—",
-        make: "—",
-        model: "—",
-        trim: "—",
-        driveType: "—",
-        brakeSystem: "—",
-        engine: "—",
-        manufactured: "—",
-        bodyStyle: "—",
-        tires: "—",
-        transmission: "—",
+
+      const engineParts = [];
+      if (cleanValue(v.DisplacementL, "") !== "") engineParts.push(cleanValue(v.DisplacementL) + "L");
+      if (cleanValue(v.EngineConfiguration, "") !== "") engineParts.push(cleanValue(v.EngineConfiguration));
+      if (cleanValue(v.EngineCylinders, "") !== "") engineParts.push(cleanValue(v.EngineCylinders) + " Cyl");
+      const engineText = engineParts.join(" ").trim() || cleanValue(v.EngineModel);
+
+      const formatted = {
+        year: cleanValue(v.ModelYear, "—"),
+        makeModel: `${cleanValue(v.Make, "")} ${cleanValue(v.Model, "")}`.trim() || "NOT ON FILE",
+        trim: cleanValue(v.Trim, "—"),
+        driveType: cleanValue(v.DriveType, "—"),
+        brakeSystem: cleanValue(v.BrakeSystemType, "—"),
+        engine: engineText,
+        manufactured: cleanValue(v.PlantCountry, "—"),
+        bodyStyle: cleanValue(v.BodyClass, "—"),
+        tires:
+          cleanValue(v.TireSize, "") ||
+          cleanValue(v.WheelSizeFront, "") ||
+          cleanValue(v.WheelSizeRear, "") ||
+          "NOT ON FILE",
+        transmission:
+          cleanValue(v.TransmissionStyle, "") ||
+          cleanValue(v.TransmissionDescriptor, "") ||
+          "NOT ON FILE",
         warranty: "NOT ON FILE",
         msrp: "NOT ON FILE",
-        doors: "—",
-        seats: "—",
-        fuelType: "—",
-        country: "—",
-        vehicleType: "—",
         accidentHistory: "LOCKED 🔒",
         titleRecords: "LOCKED 🔒",
         odometerReading: "LOCKED 🔒",
@@ -213,366 +138,160 @@ const VehicleReport = () => {
         insuranceRecords: "LOCKED 🔒",
         previousOwners: "LOCKED 🔒",
         serviceHistory: "LOCKED 🔒"
-      });
+      };
+
+      setVehicleData(formatted);
       setLoadingProgress(100);
-      setTimeout(() => {
-        setShowResults(true);
-        setTimeout(() => {
-          setShowPricingPlans(true);
-        }, 500);
-      }, 800);
+      setChecksCompleted(checks.length);
+      setTimeout(() => setShowResults(true), 600);
+    } catch {
+      setVehicleData(buildFallbackData());
+      setLoadingProgress(100);
+      setChecksCompleted(checks.length);
+      setTimeout(() => setShowResults(true), 600);
     }
   };
 
-  const handlePlanSelect = (plan) => {
-    setSelectedPlan(plan);
-    setShowPaymentModal(true);
-  };
-
-  const handlePaymentSuccess = (email) => {
-    setUserEmail(email);
-    setShowPaymentModal(false);
-    setShowPaymentSuccess(true);
-    
-    console.log(`Payment successful for ${selectedPlan.name} plan. Email: ${email}`);
-    
-    alert(`Payment successful! Report will be sent to ${email} shortly.`);
-  };
-
-  const goBack = () => {
-    navigate('/', { state: { shouldFocusInput: true } });
-  };
-
-  // Function to navigate to Full Vehicle History page
-  const viewFullHistory = () => {
-    navigate('/full-vehicle-history', {
-      state: {
-        vin: vin,
-        vehicleData: vehicleData,
-        plan: selectedPlan || basePlans[2] // Default to premium if no plan selected
-      }
-    });
-  };
-
-  // Function to navigate to Full Vehicle History with a specific plan
-  const viewFullHistoryWithPlan = (plan) => {
-    navigate('/full-vehicle-history', {
-      state: {
-        vin: vin,
-        vehicleData: vehicleData,
-        plan: plan
-      }
-    });
-  };
-
-  const currency = currencies[userCountry] || currencies.default;
+  const goBack = () => navigate("/", { state: { shouldFocusInput: true } });
+  const goToPlans = () => navigate("/plans", { state: { vin, vehicleData } });
 
   return (
     <div className="vehicle-report-page">
-      {/* Navigation Bar */}
+      {/* NAVBAR */}
       <nav className="report-nav">
         <div className="nav-container">
-          <div className="logo" onClick={goBack} style={{ cursor: 'pointer' }}>
+          <div className="logo" onClick={goBack}>
             <span className="logo-icon">🚗</span>
             <span className="logo-text">VIN Decoder Pro</span>
           </div>
-          <div className="nav-buttons">
-            <button className="nav-back-btn" onClick={goBack}>
-              ← Back to Search
-            </button>
-          </div>
+          <button className="select-plan-btn" onClick={goToPlans}>
+            <span>🔓</span>
+            Select Plan
+          </button>
         </div>
       </nav>
 
+      {/* PAGE BODY */}
       <div className="vehicle-report-container">
+        {/* INVALID VIN */}
         {!hasValidVIN ? (
           <div className="error-section">
-            <div className="error-content">
-              <h2>❌ Invalid or Missing VIN</h2>
-              <p>No valid VIN number found. Please enter a VIN on the main page.</p>
-              <p>Redirecting to home page in 3 seconds...</p>
-              <button className="btn back-btn" onClick={goBack}>
-                Go Back Now
-              </button>
-            </div>
+            <h2>❌ Invalid VIN Entered</h2>
+            <p>Please check your VIN and try again</p>
+            <p style={{ fontSize: '14px', marginTop: '10px', opacity: 0.8 }}>
+              Redirecting to search in 3 seconds...
+            </p>
           </div>
         ) : !showResults ? (
+          /* LOADING SCREEN */
           <div className="loading-section">
-            <div className="loading-header">
-              <h2>Searching Vehicle Records for VIN {vin}</h2>
-              <div className="progress-percentage">{Math.round(loadingProgress)}%</div>
+            <h2>Decoding VIN</h2>
+            <div className="vin-display">{vin}</div>
+            <div className="progress-bar">
+              <div 
+                className="progress" 
+                style={{ width: `${loadingProgress}%` }} 
+              />
             </div>
-            
-            <div className="progress-container">
-              <div className="progress-bar" style={{ width: `${loadingProgress}%` }}></div>
-              <div className="progress-text">Please Wait...</div>
-            </div>
-            
-            <div className="scanning-text">
-              <h3>Scanning Vehicle Databases:</h3>
-            </div>
-            
+            <p style={{ color: '#6b7280', marginBottom: '30px' }}>
+              {checksCompleted} of {checks.length} checks completed
+            </p>
             <div className="checks-grid">
-              {checks.map((check, index) => (
-                <div 
-                  key={check.id} 
-                  className={`check-item ${index === activeCheck ? 'active' : ''}`}
-                  style={{ 
-                    borderColor: check.color,
-                    backgroundColor: index === activeCheck ? `${check.color}15` : '#f8f9fa'
-                  }}
+              {checks.map((c, i) => (
+                <div
+                  key={i}
+                  className={`check-item ${i <= checksCompleted - 1 ? "active" : ""}`}
+                  style={{ '--color': c.color }}
                 >
-                  <div className="check-icon" style={{ color: check.color }}>
-                    {check.icon}
-                  </div>
-                  <div className="check-name">{check.name}</div>
-                  {index === activeCheck && (
-                    <div className="checking-indicator">Checking...</div>
+                  <div className="check-icon">{c.icon}</div>
+                  <div className="check-name">{c.name}</div>
+                  {i === activeCheck && i > checksCompleted - 1 && (
+                    <div className="checking-indicator">Checking…</div>
+                  )}
+                  {i <= checksCompleted - 1 && (
+                    <div className="checking-indicator" style={{ color: c.color }}>
+                      ✓ Complete
+                    </div>
                   )}
                 </div>
               ))}
             </div>
           </div>
-        ) : showPaymentSuccess ? (
-          <PaymentSuccess 
-            vehicleData={vehicleData}
-            selectedPlan={selectedPlan}
-            userEmail={userEmail}
-            onBack={goBack}
-            onViewFullHistory={viewFullHistory}
-          />
         ) : (
+          /* RESULTS */
           <div className="results-section">
-            <div className="results-header">
-              <h2>Vehicle Report Preview</h2>
-              <p className="report-date">Limited preview • Full report requires purchase</p>
+            <h2>Vehicle Report Preview</h2>
+            <p className="report-date">
+              {new Date().toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
+            </p>
+
+            <button className="select-plan-btn top" onClick={goToPlans}>
+              🔓 Unlock Full Report
+            </button>
+
+            {/* FREE FIELDS */}
+            <div className="detail-section">
+              <h3>Basic Vehicle Information</h3>
+              <div className="detail-grid">
+                <Field label="Year" value={vehicleData.year} />
+                <Field label="Make & Model" value={vehicleData.makeModel} />
+                <Field label="Trim" value={vehicleData.trim} />
+                <Field label="Drive Type" value={vehicleData.driveType} />
+                <Field label="Brake System" value={vehicleData.brakeSystem} />
+                <Field label="Engine" value={vehicleData.engine} />
+                <Field label="Manufactured In" value={vehicleData.manufactured} />
+                <Field label="Body Style" value={vehicleData.bodyStyle} />
+                <Field label="Tires" value={vehicleData.tires} />
+                <Field label="Transmission" value={vehicleData.transmission} />
+                <Field label="Warranty" value="NOT ON FILE" />
+                <Field label="MSRP" value="NOT ON FILE" />
+              </div>
             </div>
-            
-            {vehicleData && (
-              <div className="vehicle-details">
-                <div className="detail-section">
-                  <h3>Basic Vehicle Information (FREE)</h3>
-                  <div className="detail-grid">
-                    <div className="detail-item">
-                      <span className="detail-label">Year:</span>
-                      <span className="detail-value">{vehicleData.year}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Make:</span>
-                      <span className="detail-value">{vehicleData.make}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Model:</span>
-                      <span className="detail-value">{vehicleData.model}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Trim:</span>
-                      <span className="detail-value">{vehicleData.trim}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Body Style:</span>
-                      <span className="detail-value">{vehicleData.bodyStyle}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Vehicle Type:</span>
-                      <span className="detail-value">{vehicleData.vehicleType}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="detail-section">
-                  <h3>Technical Specifications (FREE)</h3>
-                  <div className="detail-grid">
-                    <div className="detail-item">
-                      <span className="detail-label">Engine:</span>
-                      <span className="detail-value">{vehicleData.engine}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Transmission:</span>
-                      <span className="detail-value">{vehicleData.transmission}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Drive Type:</span>
-                      <span className="detail-value">{vehicleData.driveType}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Fuel Type:</span>
-                      <span className="detail-value">{vehicleData.fuelType}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Doors:</span>
-                      <span className="detail-value">{vehicleData.doors}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Seats:</span>
-                      <span className="detail-value">{vehicleData.seats}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="detail-section">
-                  <h3>Manufacturing Details (FREE)</h3>
-                  <div className="detail-grid">
-                    <div className="detail-item">
-                      <span className="detail-label">Manufactured In:</span>
-                      <span className="detail-value">{vehicleData.country}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Brake System:</span>
-                      <span className="detail-value">{vehicleData.brakeSystem}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Tire Size:</span>
-                      <span className="detail-value">{vehicleData.tires}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Warranty Info:</span>
-                      <span className="detail-value">{vehicleData.warranty}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="detail-section locked-section">
-                  <h3>⚠️ Locked Information - Purchase Required</h3>
-                  <div className="detail-grid">
-                    <div className="detail-item locked">
-                      <span className="detail-label">Accident History:</span>
-                      <span className="detail-value">{vehicleData.accidentHistory}</span>
-                    </div>
-                    <div className="detail-item locked">
-                      <span className="detail-label">Title Records:</span>
-                      <span className="detail-value">{vehicleData.titleRecords}</span>
-                    </div>
-                    <div className="detail-item locked">
-                      <span className="detail-label">Odometer Reading:</span>
-                      <span className="detail-value">{vehicleData.odometerReading}</span>
-                    </div>
-                    <div className="detail-item locked">
-                      <span className="detail-label">Sales History:</span>
-                      <span className="detail-value">{vehicleData.salesHistory}</span>
-                    </div>
-                    <div className="detail-item locked">
-                      <span className="detail-label">Market Value:</span>
-                      <span className="detail-value">{vehicleData.marketValue}</span>
-                    </div>
-                    <div className="detail-item locked">
-                      <span className="detail-label">Recall Information:</span>
-                      <span className="detail-value">{vehicleData.recallInfo}</span>
-                    </div>
-                    <div className="detail-item locked">
-                      <span className="detail-label">Theft Records:</span>
-                      <span className="detail-value">{vehicleData.theftRecords}</span>
-                    </div>
-                    <div className="detail-item locked">
-                      <span className="detail-label">Insurance Records:</span>
-                      <span className="detail-value">{vehicleData.insuranceRecords}</span>
-                    </div>
-                    <div className="detail-item locked">
-                      <span className="detail-label">Previous Owners:</span>
-                      <span className="detail-value">{vehicleData.previousOwners}</span>
-                    </div>
-                    <div className="detail-item locked">
-                      <span className="detail-label">Service History:</span>
-                      <span className="detail-value">{vehicleData.serviceHistory}</span>
-                    </div>
-                  </div>
-                </div>
+
+            {/* LOCKED FIELDS */}
+            <div className="detail-section locked-section">
+              <h3>Premium Vehicle Information</h3>
+              <div className="detail-grid">
+                <Field label="Accident History" value={vehicleData.accidentHistory} locked />
+                <Field label="Title Records" value={vehicleData.titleRecords} locked />
+                <Field label="Odometer" value={vehicleData.odometerReading} locked />
+                <Field label="Sales History" value={vehicleData.salesHistory} locked />
+                <Field label="Market Value" value={vehicleData.marketValue} locked />
+                <Field label="Recall Info" value={vehicleData.recallInfo} locked />
+                <Field label="Theft Records" value={vehicleData.theftRecords} locked />
+                <Field label="Insurance Records" value={vehicleData.insuranceRecords} locked />
+                <Field label="Previous Owners" value={vehicleData.previousOwners} locked />
+                <Field label="Service History" value={vehicleData.serviceHistory} locked />
               </div>
-            )}
-            
-            {showPricingPlans && (
-              <div className="pricing-plans-section">
-                <h3>Unlock Full Vehicle History Report</h3>
-                <p className="pricing-subtitle">Choose a plan to access complete vehicle information</p>
-                
-                <div className="pricing-plans-grid">
-                  {basePlans.map((plan) => {
-                    const price = (plan.price * currency.rate).toFixed(2);
-                    return (
-                      <div 
-                        key={plan.id}
-                        className={`pricing-plan-card ${selectedPlan?.id === plan.id ? 'selected' : ''}`}
-                        onClick={() => handlePlanSelect(plan)}
-                        style={{ borderColor: plan.color }}
-                      >
-                        <div className="plan-header" style={{ backgroundColor: `${plan.color}20` }}>
-                          <h4>{plan.name}</h4>
-                          <div className="plan-price">
-                            <span className="currency">{currency.symbol}</span>
-                            <span className="amount">{price}</span>
-                            <span className="period">{plan.id === 'premium' ? '/30 days' : '/report'}</span>
-                          </div>
-                        </div>
-                        <div className="plan-features">
-                          <ul>
-                            {plan.features.map((feature, index) => (
-                              <li key={index}>
-                                <span className="feature-icon">✓</span>
-                                {feature}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        <div className="plan-actions">
-                          <button 
-                            className="select-plan-btn"
-                            style={{ backgroundColor: plan.color }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handlePlanSelect(plan);
-                            }}
-                          >
-                            {selectedPlan?.id === plan.id ? 'Selected' : 'Select Plan'}
-                          </button>
-                          {plan.id === 'premium' && (
-                            <button 
-                              className="view-full-history-btn"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                viewFullHistoryWithPlan(plan);
-                              }}
-                            >
-                              📋 Preview Full Report
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                
-                <div className="currency-notice">
-                  <p>Prices shown in {currency.code} based on your location</p>
-                </div>
-              </div>
-            )}
-            
+            </div>
+
+            {/* BOTTOM ACTION BUTTONS */}
             <div className="action-buttons">
+              <button className="select-plan-btn large" onClick={goToPlans}>
+                🔓 Select Plan to Unlock Full Report
+              </button>
               <button className="btn back-btn" onClick={goBack}>
                 ← Back to Search
               </button>
-              
             </div>
           </div>
         )}
-        
-        {showPaymentModal && selectedPlan && (
-          <PaymentModal
-            vehicleData={vehicleData || { year: '—', make: '—', model: '—' }}
-            selectedPlan={selectedPlan}
-            currency={currency}
-            onClose={() => setShowPaymentModal(false)}
-            onPaymentSuccess={handlePaymentSuccess}
-          />
-        )}
-        
-        {/* Floating cars background */}
-        <div className="floating-car-report">🚗</div>
-        <div className="floating-car-report">🏎️</div>
-        <div className="floating-car-report">🚙</div>
       </div>
     </div>
   );
 };
+
+/* REUSABLE FIELD COMPONENT */
+const Field = ({ label, value, locked }) => (
+  <div className={`detail-item ${locked ? "locked" : ""}`}>
+    <span className="detail-label">{label}</span>
+    <span className="detail-value">{value}</span>
+  </div>
+);
 
 export default VehicleReport;
